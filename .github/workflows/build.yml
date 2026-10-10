@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: macos-15
@@ -35,3 +38,12 @@ jobs:
         with:
           name: TikSticker-ipa
           path: TikSticker.ipa
+
+      - name: Publish as a release (easy download)
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "build-${{ github.run_number }}" TikSticker.ipa \
+            --title "TikSticker (build ${{ github.run_number }})" \
+            --notes "نزّل TikSticker.ipa وثبّته على الآيفون بـ Sideloadly." --latest
